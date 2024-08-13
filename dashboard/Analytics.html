@@ -1,0 +1,73 @@
+<?php
+// Include the header which contains the navbar and sidebar
+include('header.php');
+
+// Example variables (you would fetch these from your database)
+$empid = $_SESSION['empid']; // Assuming empid is stored in session after login
+$role = $_SESSION['role']; // Assuming role is stored in session after login
+
+// Fetch the necessary data from your database
+// Assuming you have already established a database connection
+
+// Query to get the direct referral count
+$queryDirectReferrals = "SELECT COUNT(*) as directReferralCount FROM users WHERE inviter_id = '$empid'";
+$resultDirectReferrals = mysqli_query($conn, $queryDirectReferrals);
+$rowDirectReferrals = mysqli_fetch_assoc($resultDirectReferrals);
+$directReferralCount = $rowDirectReferrals['directReferralCount'];
+
+// Define the commission per referral
+$commissionPerReferral = 50; // Example value
+
+// Calculate earnings from direct referrals
+$directReferralEarnings = $directReferralCount * $commissionPerReferral;
+
+// Query to get the earnings from employee referrals
+$queryEmployeeReferrals = "
+    SELECT SUM(referral_earnings) as employeeReferralEarnings 
+    FROM earnings 
+    WHERE referrer_id = '$empid'";
+$resultEmployeeReferrals = mysqli_query($conn, $queryEmployeeReferrals);
+$rowEmployeeReferrals = mysqli_fetch_assoc($resultEmployeeReferrals);
+$employeeReferralEarnings = $rowEmployeeReferrals['employeeReferralEarnings'];
+
+// Calculate total earnings
+$totalEarnings = $directReferralEarnings + $employeeReferralEarnings;
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Earning</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Include your stylesheet -->
+</head>
+<body>
+    <div class="main-container">
+        <!-- User details section -->
+        <div class="user-details" style="text-align: right; margin-top: 20px; margin-right: 20px;">
+            <p>Emp ID: <strong><?php echo $empid; ?></strong></p>
+            <p>Role: <strong><?php echo $role; ?></strong></p>
+        </div>
+
+        <!-- Earnings section -->
+        <div class="earnings-section" style="margin: 40px;">
+            <h2>My Earnings for This Month</h2>
+
+            <!-- Direct user referral earnings -->
+            <p>Direct User Referral Earnings: <strong><?php echo $directReferralEarnings; ?></strong></p>
+
+            <!-- Earnings from employee referrals -->
+            <p>Employee Referral Earnings: <strong><?php echo $employeeReferralEarnings; ?></strong></p>
+
+            <!-- Total earnings -->
+            <p>Total Earnings: <strong><?php echo $totalEarnings; ?></strong></p>
+        </div>
+    </div>
+
+    <!-- Script to refresh data each month -->
+    <script>
+        // You can implement data refresh logic here or handle it on the server side
+    </script>
+</body>
+</html>

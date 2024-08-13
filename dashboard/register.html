@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="register.css"> <!-- Link to your CSS file for styling -->
+</head>
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <form id="registrationForm" action="register.php" method="POST" onsubmit="return validateForm()">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="confirmpassword">Confirm Password:</label>
+            <input type="password" id="confirmpassword" name="confirmpassword" required>
+
+            <label for="EmpRole">Employee Role:</label>
+            <input type="text" id="EmpRole" name="EmpRole" required readonly>
+
+            <input type="text" id="inviter_id" name="inviter_id" required readonly>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <script>
+        function validateForm() {
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmpassword").value;
+            if (password !== confirmPassword) {
+                alert("Passwords do not match.");
+                return false;
+            }
+            return true;
+        }
+
+        function getQueryParameter(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+            var results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var role = getQueryParameter("role");
+            var inviterId = getQueryParameter("inviter_id");
+            
+            if (role) {
+                document.getElementById("EmpRole").value = role;
+            }
+            if (inviterId) {
+                document.getElementById("inviter_id").value = inviterId;
+            }
+        });
+    </script>
+</body>
+</html>
